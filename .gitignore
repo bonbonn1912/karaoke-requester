@@ -1,8 +1,10 @@
 # Logs
 logs
 demo
+build
 .idea
 *.log
+*.csv
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
