@@ -24,11 +24,11 @@ jobs:
           port: 22
           script: |
             cd /home/karaoke-requester
-            pm2 stop index.js
+            pm2 stop karaoke-10000
             git pull
             npm install
             cd client
             npm install
             npm run build
             cd ..
-            pm2 start index.js
+            pm2 start index.js --name karaoke-10000
