@@ -38,14 +38,8 @@ const InputField = (props) =>{
     }
     return (
         <div>
-            <div className="flex w-full mt-4 h-fit justify-center">
-                <div className="relative w-3/4">
-                    <label
-                        htmlFor="name"
-                        className="absolute -top-2 left-2 inline-block bg-white px-1 text-xs font-medium text-gray-900"
-                    >
-                        Song
-                    </label>
+            <div className="grid grid-cols-10 w-full mt-4 h-fit">
+                <div className="relative w-full col-span-8">
                     <input
                         onChange={(e) => {
                             delayedFetchSuggestions(e.target.value);
@@ -53,7 +47,7 @@ const InputField = (props) =>{
                         type="text"
                         name="song"
                         id="Song"
-                        className="block w-full rounded-md border-0 py-2.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 sm:text-sm sm:leading-6 mb-2"
+                        className="block w-full ml-2 rounded-md border-0 py-2.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 sm:text-sm sm:leading-6 mb-2"
                         placeholder="Dein Liederwunsch..."
                     />
                 </div>

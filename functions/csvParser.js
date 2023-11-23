@@ -1,7 +1,7 @@
-const fs = require('fs');
+import fs from 'fs';
 
 
-module.exports = function getCsvData (){
+export function getCsvData (){
     const csvData = fs.readFileSync('./karafuncatalog.csv', 'utf8');
     const csvLines = csvData.split('\n');
     const header = csvLines.shift().split(';');
