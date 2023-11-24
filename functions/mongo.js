@@ -92,7 +92,7 @@ export async function getData(searchString){
 
     const regex = new RegExp(searchString, 'i');
     try{
-        return await Song.find({title: regex}).limit(300);
+        return await Song.find({ $or: [{ title: regex }, { artist: regex }] }).limit(80)
     }catch (err){
         console.log(err);
     }
