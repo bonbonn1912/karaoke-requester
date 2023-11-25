@@ -4,10 +4,20 @@ import {FaRegTrashAlt} from "react-icons/fa";
 import { IoAddCircle } from "react-icons/io5";
 const UserInput = ({users, addUser, removeUser}) =>{
     const [name, setName] = useState("");
+    const [addButtonDisabled, setAddButtonDisabled] = useState(true);
+
+    const validateInput = () => {
+        if(name.length > 0){
+            setAddButtonDisabled(false);
+        }else{
+            setAddButtonDisabled(true);
+        }
+    }
 
     const submit = () => {
         addUser(name);
         setName("");
+        setAddButtonDisabled(true);
     }
 
 
@@ -30,6 +40,7 @@ const UserInput = ({users, addUser, removeUser}) =>{
                 <div className="relative flex w-full">
                     <input
                         onChange={(e) => {
+                            validateInput();
                             setName(e.target.value);
                         }}
                         type="text"
@@ -40,7 +51,10 @@ const UserInput = ({users, addUser, removeUser}) =>{
                         placeholder="Name..."
                     />
                     <div className="ml-2"> {/* Neuer Container für den Hinzufügen-Button */}
-                        <button onClick={() => {submit()}} className="w-fit h-11 p-2 rounded-xl"><IoAddCircle size={40} color={"#283583"}/></button>
+                        <button
+
+                            disabled={addButtonDisabled}
+                            onClick={() => {submit()}} className="w-fit h-11 p-2 rounded-xl"><IoAddCircle size={40} color={`${addButtonDisabled ?  "grey" : "#283583"}`}/></button>
                     </div>
                 </div>
             </div>
