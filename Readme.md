@@ -1,7 +1,5 @@
-# Mein Node.js & React App
+# Karaoke Requester 
 
-MERN base Setup + Tailwind. 
-### (Update: 07.11.2023) Gerichte können direkt über das Frontend in die Datenbank geschrieben werden, kein Postmen mehr nötig.
 
 ## Voraussetzungen:
 
