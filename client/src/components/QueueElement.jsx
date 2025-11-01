@@ -6,11 +6,30 @@ import { CiUnlock } from "react-icons/ci";
 const QueueElement = ({songs}) =>{
     const [ song, setSong ] = useState(songs);
     const [ crossedOut, setCrossedOut ] = useState(song.map((singleSong) => singleSong.done));
-    const [showCrossedOut, setShowCrossedOut] = useState(false);
+    const [showCrossedOut, setShowCrossedOut] = useState(() => {
+        // Initialwert aus localStorage lesen
+        const saved = localStorage.getItem('showCrossedOut');
+        return saved === 'true'; // wenn nichts gespeichert war -> false
+      });
+
+      const [isChecked, setChecked] = useState(() => {
+        // Initialwert aus localStorage lesen
+        const saved = localStorage.getItem('showCrossedOut');
+        return saved === 'true'; // wenn nichts gespeichert war -> false
+      });
     const [queueOpen, setQueueOpen] = useState(true);
     useEffect(() => {
         checkQueueStatus();
     }, []);
+
+    useEffect(() => {
+        setSong(songs);
+        setCrossedOut(songs.map((s) => s.done));
+      }, [songs]);
+
+    useEffect(() => {
+        localStorage.setItem('showCrossedOut', showCrossedOut.toString());
+      }, [showCrossedOut]);
 
     const checkQueueStatus = async () => {
         const res = await fetch("/api/is-queue-open");
@@ -82,7 +101,6 @@ const QueueElement = ({songs}) =>{
 
         return formatierterZeitstempel;
     }
-    const [isChecked, setChecked] = useState(false);
 
     const handleToggle = () => {
         setShowCrossedOut(!showCrossedOut)
@@ -90,7 +108,7 @@ const QueueElement = ({songs}) =>{
     };
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8 bg-white">
             <div className="flex items-center w-1/2 justify-evenly">
                 <h2 className="text-lg leading-6 font-medium text-gray-900 mr-2">Queue</h2>
                 <div>
@@ -104,7 +122,7 @@ const QueueElement = ({songs}) =>{
                         />
                         <div className={`w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer ${isChecked ? 'peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white' : ''} after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600`}
                         ></div>
-                        <span className="ms-3 text-sm font-medium text-black">
+                        <span className="ms-3 text-sm font-medium text-gray-900">
         Zeige Abgeschlossene
       </span>
                     </label>
@@ -112,12 +130,12 @@ const QueueElement = ({songs}) =>{
                 <div>
                     {
                         queueOpen ?
-                            <button onClick={() => {openQueue(false)}} className="mt-2 mb-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            <button onClick={() => {openQueue(false)}} className="mt-2 mb-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-gray-900 bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                 <CiLock size={20} color={"white"} className="mr-2"/>
 
                             </button>
                             :
-                            <button onClick={() => {openQueue(true)}} className="mt-2 mb-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <button onClick={() => {openQueue(true)}} className="mt-2 mb-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-gray-900 bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                 <CiUnlock size={20} color={"white"} className="mr-2"/>
                             </button>
                     }
@@ -153,13 +171,13 @@ const QueueElement = ({songs}) =>{
                             <tbody className="divide-y divide-gray-200">
                             {song.map((singleSong, index) => (
                                 <tr key={singleSong._id} className={`${singleSong.done && !showCrossedOut ? "hidden" : ""}`}>
-                                    <td className="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                                    <td className="whitespace-nowrap py-2 pl-2 pr-3 text-xl font-medium text-gray-900 sm:pl-0">
                                         <img className="rounded-xl w-12" src={singleSong.imgUrl} alt=""/>
                                     </td>
-                                    <td className={`whitespace-nowrap px-3 py-4 text-sm text-black ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{singleSong.title}</td>
-                                    <td className={`whitespace-nowrap px-3 py-4 text-sm text-black ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{singleSong.artist}</td>
-                                    <td className={`whitespace-nowrap px-3 py-4 text-sm text-black ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{singleSong.singer}</td>
-                                    <td className={`whitespace-nowrap px-3 py-4 text-sm text-black ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{convertTimeStamp(singleSong.requestTime)}</td>
+                                    <td className={`whitespace-nowrap px-3 py-4 text-xl text-gray-900 ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{singleSong.title}</td>
+                                    <td className={`whitespace-nowrap px-3 py-4 text-xl text-gray-900 ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{singleSong.artist}</td>
+                                    <td className={`whitespace-nowrap px-3 py-4 text-xl text-gray-900 ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{singleSong.singer}</td>
+                                    <td className={`whitespace-nowrap px-3 py-4 text-xl text-gray-900 ${crossedOut[index] ? "line-through" : "font-semibold"}`}>{convertTimeStamp(singleSong.requestTime)}</td>
                                     <td className="whitespace-nowrap py-4 pl-3 pr-4rounded-xl flex items-center justify-center mt-2">
                                         <div className="flex items-center justify-center bg-red-300 h-full">
                                             <input
