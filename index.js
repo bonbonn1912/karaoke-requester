@@ -9,19 +9,8 @@ const __dirname = path.dirname(__filename);
 
 const server = express();
 
-let QueueOpen = false;
+import { addSongToQueue, getData, getFullQueue, crossOutSong, changeQueue, getQueueStatus } from "./functions/mongo.js";
 
-
-import { getCsvData} from "./functions/csvParser.js";
-import { insertData, addSongToQueue, getData, getFullQueue, crossOutSong, changeQueue, initConfig, getQueueStatus } from "./functions/mongo.js";
-
-async function start(){
-    const data = getCsvData();
-    console.log(data.length)
-   // insertData(data); // DONT REMOVE COMMENT
-}
-//initConfig();
-//start();
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';

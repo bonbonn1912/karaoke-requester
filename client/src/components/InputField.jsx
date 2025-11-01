@@ -2,86 +2,119 @@ import {useState} from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import LoadingSpinner from './LoadingSpinner';
 
-const InputField = (props) =>{
-
+const InputField = (props) => {
     const [suggestions, setSuggestions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+  
+    // debounce helper
     const debounce = (func, delay) => {
-        let timeoutId;
-        return (...args) => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
+      let timeoutId;
+      return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func(...args), delay);
+      };
     };
+  
+    // API call with debounce
     const delayedFetchSuggestions = debounce(async (searchTerm) => {
-        setIsLoading(true)
-        const response = await fetch(`/api/suggest?term=${searchTerm}`);
-        const data = await response.json();
-        if(data.length === 0){
-            setSuggestions([]);
-        }
-        // map throw data and remove Quotes
-        const sanitizedData = data.map((item) => {
-            const imgUrl = item.imgUrl === "" ? "http://www.karaoke-version.com/i/img/01/72/51/23_b75c66_sq100.jpg" : item.imgUrl;
-           return {title: item.title.replace(/['"]+/g, ''), artist: item.artist.replace(/['"]+/g, ''), imgUrl: imgUrl};
-
-        });
-        setSuggestions(sanitizedData);
-        setIsLoading(false);
-        return data;
+      if (!searchTerm || searchTerm.trim() === "") {
+        setSuggestions([]);
+        return;
+      }
+  
+      setIsLoading(true);
+      const response = await fetch(`/api/suggest?term=${searchTerm}`);
+      const data = await response.json();
+  
+      const sanitizedData = data.map((item) => {
+        const imgUrl =
+          item.imgUrl === ""
+            ? "http://www.karaoke-version.com/i/img/01/72/51/23_b75c66_sq100.jpg"
+            : item.imgUrl;
+        return {
+          title: item.title.replace(/['"]+/g, ""),
+          artist: item.artist.replace(/['"]+/g, ""),
+          imgUrl: imgUrl,
+        };
+      });
+  
+      setSuggestions(sanitizedData);
+      setIsLoading(false);
     }, 500);
-
+  
     const handleSongSelect = (song) => {
-        props.handleSongSelect(song);
-    }
+      props.handleSongSelect(song);
+      setShowSuggestions(false);
+    };
+  
     return (
-        <div>
-            <div className="grid grid-cols-10 w-full mt-4 h-fit">
-                <div className="relative w-full col-span-8">
-                    <input
-                        onChange={(e) => {
-                            delayedFetchSuggestions(e.target.value);
-                        }}
-                        type="text"
-                        name="song"
-                        id="Song"
-                        className="block w-full ml-2 rounded-md border-0 py-2.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 sm:text-sm sm:leading-6 mb-2"
-                        placeholder="Dein Liederwunsch oder Interpret ..."
-                    />
-                </div>
-            </div>
-            {isLoading && <LoadingSpinner/>}
-            {suggestions.length === 0 && !isLoading && <p className="text-center mt-2"></p>}
-            {suggestions.length > 0 &&
-                <div className="h-[500px] w-full flex overflow-auto">
-                    <ul className="w-full">
-                        {suggestions.map((suggestion, index) => (
-                            <li
-                                className="flex min-h-16 max-h-fit justify-between items-center rounded-xl bg-gray-100 p-2 m-2 relative hover:bg-gray-300"
-                                key={index}
-                            >
-                                <div className="rounded-xl">
-                                    <img className="rounded-xl" src={suggestion.imgUrl} alt=""/>
-                                </div>
-                                <div className="w-3/4 ml-2">
-                                    <p className="font-semibold">{suggestion.title}</p>{suggestion.artist}
-                                </div>
-                                <button
-                                    onClick={() => {handleSongSelect(suggestion)}}
-                                    className="rounded-full w-12 h-12 font-bold flex justify-center items-center">
-                                    <IoMdAddCircleOutline color={"limegreen"} size={40}/>
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            }
+      <div className="w-full mt-4 h-fit">
+        <div className="relative w-full">
+          {/* INPUT FIELD */}
+          <input
+            onChange={(e) => {
+              delayedFetchSuggestions(e.target.value);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            type="text"
+            name="song"
+            id="song"
+            className="block w-full rounded-xl border border-[#283583]/40 bg-white px-3 py-2.5 text-[#1e1e1e] placeholder:text-gray-400 focus:border-[#283583] focus:ring-2 focus:ring-[#283583]/40 shadow-sm transition-all duration-200 sm:text-sm sm:leading-6 mb-2"
+            placeholder="Dein Liederwunsch oder Interpret ..."
+          />
+  
+          {/* LADESPINNER */}
+          {isLoading && <LoadingSpinner />}
+  
+          {/* AUTOCOMPLETE-LISTE */}
+          {showSuggestions && suggestions.length > 0 && !isLoading && (
+            <ul className="absolute top-[110%] w-[calc(100%-1rem)] bg-white border border-[#283583]/30 rounded-xl shadow-lg z-50 max-h-72 overflow-auto">
+              {suggestions.map((suggestion, index) => (
+  <li
+    key={index}
+    className="flex flex-row items-center justify-between rounded-xl bg-white hover:bg-[#283583]/10 transition-all duration-300 p-3 cursor-pointer"
+    onMouseDown={() => handleSongSelect(suggestion)} // mouseDown verhindert Blur-Kollision
+  >
+    {/* SONG INFOS-GRUPPE: Bild + Text */}
+    <div className="flex items-center min-w-0 flex-shrink overflow-hidden">
+      {/* SONG COVER */}
+      <img
+        className="rounded-xl w-14 h-14 object-cover border border-[#283583]/30 flex-shrink-0"
+        src={suggestion.imgUrl}
+        alt={suggestion.title}
+      />
 
+      {/* SONG INFOS */}
+      <div className="ml-3 overflow-hidden">
+        <p className="font-semibold text-[#283583] truncate text-sm sm:text-base md:text-lg">
+          {suggestion.title}
+        </p>
+        <p className="text-gray-600 text-xs sm:text-sm md:text-base truncate">
+          {suggestion.artist}
+        </p>
+      </div>
+    </div>
 
+    {/* ADD BUTTON */}
+    <div className="flex-shrink-0 ml-3">
+      <button
+        className="flex justify-center items-center rounded-xl w-10 h-10 border border-[#283583]/30 bg-white hover:bg-[#283583]/10 hover:scale-105 transition-all duration-200"
+        aria-label={`Song ${suggestion.title} auswählen`}
+      >
+        <IoMdAddCircleOutline size={26} color={"#283583"} />
+      </button>
+    </div>
+  </li>
+))}
+            </ul>
+          )}
         </div>
-    )
-}
-
-export default InputField
+  
+        {/* keine Anzeige bei leeren Resultaten */}
+      </div>
+    );
+  };
+  
+  export default InputField;

@@ -80,40 +80,62 @@ const Home = () =>{
 
     return (
         <>
-            <div className="flex justify-center items-baseline md:items-center h-screen bg-gray-100 rounded-3xl">
-                <div className="w-full md:w-1/2 grid grid-cols-3 bg-gray-200 rounded-xl">
-                    {
-                        isSongSelected ? (
-                            <div className="col-span-3">
-                                <SelectedSong
-                                    selectedSong={song}
-                                    handleDelete={handleSongDelete}/>
-                            </div>
-                        ) : (
-                            <div className="col-span-3"><InputField
-                                handleSongSelect={handleSongSelect}/></div>
-                        )
-                    }
-                    <div className="h-fit flex col-span-3"><UserInput
-                        addUser={addUser}
-                        removeUser={removeUser}
-                        users={users}
-                    /></div>
-                        {
-                            queueOpen && (
-                                <div className="text-red-500 col-span-3 flex justify-center">Momentan können keine Songs hinzugefügt werden</div>
-                                )
-                        }
-                    <div className="h-fit col-span-3"
-                    ><SubmitQ
-                        isEnabled={(song && users.length > 0)}
-                        submitSongAndSinger={submitSongAndSinger}
-                    /></div>
-                </div>
+          <div className="flex flex-col mt-20 items-center min-h-screen bg-white px-4 py-6 space-y-4">
+            
+            {/* LOGO / HEADER-BILD */}
+            <div className="flex justify-center">
+              <img
+                src="/fatschilogo.png"
+                alt="SV Fatschenbrunn Logo"
+                className="w-44 h-auto object-contain bg-white p-2"
+              />
             </div>
+      
+            {/* Hauptcontainer */}
+            <div className="w-full md:w-2/3 lg:w-1/2 flex flex-col bg-white border border-[#283583]/20 rounded-3xl shadow-xl p-5 md:p-8 gap-4">
+              {/* SONG-BEREICH */}
+              {isSongSelected ? (
+                <div className="col-span-3">
+                  <SelectedSong
+                    selectedSong={song}
+                    handleDelete={handleSongDelete}
+                  />
+                </div>
+              ) : (
+                <div className="col-span-3">
+                  <InputField handleSongSelect={handleSongSelect} />
+                </div>
+              )}
+      
+              {/* USER INPUT */}
+              <div className="col-span-3">
+                <UserInput
+                  addUser={addUser}
+                  removeUser={removeUser}
+                  users={users}
+                />
+              </div>
+      
+              {/* WARNUNG, FALLS WARTESCHLANGE GESCHLOSSEN */}
+              {queueOpen && (
+                <div className="col-span-3 flex justify-center">
+                  <p className="text-[#d32f2f] font-semibold text-sm md:text-base bg-[#ffebee] rounded-md px-4 py-2 border border-[#d32f2f]/30">
+                    Momentan können keine Songs hinzugefügt werden
+                  </p>
+                </div>
+              )}
+      
+              {/* SUBMIT BUTTON */}
+              <div className="col-span-3 flex justify-center mt-3">
+                <SubmitQ
+                  isEnabled={song && users.length > 0}
+                  submitSongAndSinger={submitSongAndSinger}
+                />
+              </div>
+            </div>
+          </div>
         </>
-
-    )
+      );
 }
 
 export default Home;
