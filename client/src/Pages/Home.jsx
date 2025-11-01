@@ -80,14 +80,14 @@ const Home = () =>{
 
     return (
         <>
-          <div className="flex flex-col mt-20 items-center min-h-screen bg-white px-4 py-6 space-y-4">
+          <div className="flex flex-col mt-20 items-center min-h-screen bg-[#1d223c] px-4 py-6 space-y-4">
             
             {/* LOGO / HEADER-BILD */}
             <div className="flex justify-center">
               <img
-                src="/fatschilogo.png"
+                src="/50years.png"
                 alt="SV Fatschenbrunn Logo"
-                className="w-44 h-auto object-contain bg-white p-2"
+                className="w-44 h-auto object-contain bg-[#1d223c] p-2"
               />
             </div>
       
